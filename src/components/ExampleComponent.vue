@@ -6,15 +6,15 @@
         {{ todo.id }} - {{ todo.content }}
       </li>
     </ul>
-    <p>Count: {{ todoCount }} / {{ meta.totalCount }}</p>
     <p>Active: {{ active ? 'yes' : 'no' }}</p>
     <p>Clicks on todos: {{ clickCount }}</p>
+    <q-btn>Hola</q-btn>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Todo, Meta } from './models';
+import {Todo, Meta, Dataset, DatasetRequirements} from './models';
 
 export default defineComponent({
   name: 'ExampleComponent',
@@ -36,6 +36,12 @@ export default defineComponent({
     }
   },
   data(): { clickCount: number } {
+    const d: DatasetRequirements = {
+      title: '',
+      spatialCoverage: [[0, 1, 2], [-1, -2, 3]],
+      temporalCoverage: [new Date()]
+    };
+    console.log(d);
     return {
       clickCount: 0
     };
