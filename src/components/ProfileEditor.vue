@@ -78,15 +78,16 @@
               </q-card-section>
             </q-card>
 
-            <q-input
-              label="Temporal coverage"
-              hint="Maximum age for the dataset, in days"
-              v-model="datasetRequirements.maxAgeDays"
-              type="number"
-            />
-
-            <q-card class="q-my-md" flat bordered>
-              <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-4">
+                <q-input
+                  label="Temporal coverage"
+                  hint="Maximum age for the dataset, in days"
+                  v-model="datasetRequirements.maxAgeDays"
+                  type="number"
+                />
+              </div>
+              <div class="col-12 col-md-4 q-mt-sm">
                 <div class="text-subtitle1">Access rights</div>
                 <div>Exclude datasets with licenses that require...</div>
                 <q-option-group
@@ -95,17 +96,19 @@
                   color="green"
                   type="checkbox"
                 />
-              </q-card-section>
-            </q-card>
+              </div>
+              <div class="col-12 col-md-4">
+                <q-select
+                  label="Coordinate reference system"
+                  :options="crsOptions"
+                  v-model="datasetRequirements.crs"
+                  map-options
+                  emit-value
+                  clearable
+                />
+              </div>
+            </div>
 
-            <q-select
-              label="Coordinate reference system"
-              :options="crsOptions"
-              v-model="datasetRequirements.crs"
-              map-options
-              emit-value
-              clearable
-            />
 
             <q-input
               label="Additional notes"
@@ -125,7 +128,6 @@
           <q-btn type="submit" color="primary">Generate profile</q-btn>
         </q-card-actions>
       </q-card>
-      {{ datasetRequirements }}
     </q-form>
   </div>
 </template>
