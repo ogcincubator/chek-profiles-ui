@@ -35,9 +35,35 @@ export const CityModels: URIResource[] = [
   CityJSON, CityGML
 ]
 
-export interface CityModule extends URIResource {
-  classes?: URIResource[];
+export interface CityClass extends URIResource {
+  semantics?: URIResource[];
 }
+
+export interface CityModule extends URIResource {
+  classes?: CityClass[];
+  semantics?: URIResource[];
+}
+
+const transportationSemantics: URIResource[] = [
+  {label: 'TrafficArea', uri: 'http://example.com/vocab/city/TrafficArea'},
+  {label: 'AuxiliaryTrafficArea', uri: 'http://example.com/vocab/city/AuxiliaryTrafficArea'},
+  {label: 'TransportationMarking', uri: 'http://example.com/vocab/city/TransportationMarking'},
+  {label: 'TransportationHole', uri: 'http://example.com/vocab/city/TransportationHole'},
+]
+
+const buildingSemantics: URIResource[] = [
+  {label: 'RoofSurface', uri: 'http://example.com/vocab/city/RoofSurface'},
+  {label: 'GroundSurface', uri: 'http://example.com/vocab/city/GroundSurface'},
+  {label: 'WallSurface', uri: 'http://example.com/vocab/city/WallSurface'},
+  {label: 'ClosureSurface', uri: 'http://example.com/vocab/city/ClosureSurface'},
+  {label: 'OuterCeilingSurface', uri: 'http://example.com/vocab/city/OuterCeilingSurface'},
+  {label: 'OuterFloorSurface', uri: 'http://example.com/vocab/city/OuterFloorSurface'},
+  {label: 'Window', uri: 'http://example.com/vocab/city/Window'},
+  {label: 'Door', uri: 'http://example.com/vocab/city/Door'},
+  {label: 'InteriorWallSurface', uri: 'http://example.com/vocab/city/InteriorWallSurface'},
+  {label: 'CeilingSurface', uri: 'http://example.com/vocab/city/CeilingSurface'},
+  {label: 'FloorSurface', uri: 'http://example.com/vocab/city/FloorSurface'},
+]
 
 // These would be retrieved from the Rainbow
 export const cityModules: CityModule[] = [
@@ -53,14 +79,14 @@ export const cityModules: CityModule[] = [
   },
   {
     label: 'Building', uri: 'http://example.com/vocab/city/Building', classes: [
-      {label: 'Building', uri: 'http://example.com/vocab/city/Building'},
-      {label: 'BuildingPart', uri: 'http://example.com/vocab/city/BuildingPart'},
-      {label: 'BuildingInstallation', uri: 'http://example.com/vocab/city/BuildingInstallation'},
+      {label: 'Building', uri: 'http://example.com/vocab/city/Building', semantics: buildingSemantics},
+      {label: 'BuildingPart', uri: 'http://example.com/vocab/city/BuildingPart', semantics: buildingSemantics},
+      {label: 'BuildingInstallation', uri: 'http://example.com/vocab/city/BuildingInstallation', semantics: buildingSemantics},
       {label: 'BuildingConstructiveElement', uri: 'http://example.com/vocab/city/BuildingConstructiveElement'},
       {label: 'BuildingFurniture', uri: 'http://example.com/vocab/city/BuildingFurniture'},
-      {label: 'BuildingStorey', uri: 'http://example.com/vocab/city/BuildingStorey'},
-      {label: 'BuildingRoom', uri: 'http://example.com/vocab/city/BuildingRoom'},
-      {label: 'BuildingUnit', uri: 'http://example.com/vocab/city/BuildingUnit'},
+      {label: 'BuildingStorey', uri: 'http://example.com/vocab/city/BuildingStorey', semantics: buildingSemantics},
+      {label: 'BuildingRoom', uri: 'http://example.com/vocab/city/BuildingRoom', semantics: buildingSemantics},
+      {label: 'BuildingUnit', uri: 'http://example.com/vocab/city/BuildingUnit', semantics: buildingSemantics},
     ]
   },
   {label: 'CityFurniture', uri: 'http://example.com/vocab/city/CityFurniture'},
@@ -77,15 +103,15 @@ export const cityModules: CityModule[] = [
   {label: 'TINRelief', uri: 'http://example.com/vocab/city/TINRelief'},
   {
     label: 'Transportation', uri: 'http://example.com/vocab/city/Transportation', classes: [
-      {label: 'Road', uri: 'http://example.com/vocab/city/Road'},
-      {label: 'Railway', uri: 'http://example.com/vocab/city/Railway'},
+      {label: 'Road', uri: 'http://example.com/vocab/city/Road', semantics: transportationSemantics},
+      {label: 'Railway', uri: 'http://example.com/vocab/city/Railway', semantics: transportationSemantics},
       {label: 'Waterway', uri: 'http://example.com/vocab/city/Waterway'},
-      {label: 'TransportSquare', uri: 'http://example.com/vocab/city/TransportSquare'},
+      {label: 'TransportSquare', uri: 'http://example.com/vocab/city/TransportSquare', semantics: transportationSemantics},
       {label: 'TrafficArea', uri: 'http://example.com/vocab/city/TrafficArea'},
       {label: 'AuxiliaryTrafficArea', uri: 'http://example.com/vocab/city/AuxiliaryTrafficArea'},
       {label: 'Marking', uri: 'http://example.com/vocab/city/Marking'},
       {label: 'Hole', uri: 'http://example.com/vocab/city/Hole'},
-    ]
+    ],
   },
   {
     label: 'Tunnel', uri: 'http://example.com/vocab/city/Tunnel', classes: [
@@ -97,7 +123,13 @@ export const cityModules: CityModule[] = [
       {label: 'TunnelFurniture', uri: 'http://example.com/vocab/city/TunnelFurniture'},
     ]
   },
-  {label: 'WaterBody', uri: 'http://example.com/vocab/city/WaterBody'},
+  {
+    label: 'WaterBody', uri: 'http://example.com/vocab/city/WaterBody', semantics: [
+      {label: 'WaterSurface', uri: 'http://example.com/vocab/city/WaterSurface'},
+      {label: 'WaterGroundSurface', uri: 'http://example.com/vocab/city/WaterGroundSurface'},
+      {label: 'WaterClosureSurface', uri: 'http://example.com/vocab/city/WaterClosureSurface'},
+    ]
+  },
 ]
 
 export const geometries: URIResource[] = [
@@ -110,21 +142,22 @@ export const geometries: URIResource[] = [
   {label: 'CompositeSolid', uri: 'http://example.com/vocab/city/CompositeSolid'},
 ]
 
-const lods: string[] = [];
+export const lods: string[] = [];
 for (let i = 1; i <= 4; i++) {
   lods.push(`${i}`)
   for (let j = 1; j <= 4; j++) {
     lods.push(`${i}.${j}`);
   }
 }
-export { lods };
 
 export interface ContentRequirements {
+  label: string,
   module: CityModule;
-  cityClass: URIResource[];
+  cityClasses: URIResource[];
+  semantics: URIResource[];
   allowedGeometries: URIResource[];
   lod?: string | null;
-  accuracyM: number;
+  accuracyM?: number | null;
   notes?: string | null;
 }
 
@@ -138,5 +171,5 @@ export interface DatasetRequirements {
   crs?: string | null;
   unitOfMeasure?: string | null;
   comments?: string | null;
-  content: ContentRequirements[];
+  contentRequirements: ContentRequirements[];
 }
