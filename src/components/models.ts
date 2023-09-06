@@ -130,11 +130,11 @@ export interface ContentRequirements {
 
 export interface DatasetRequirements {
   title: string;
-  description?: string;
+  description?: string | null;
   dataModel?: Set<URIResource> | null;
   spatialCoverage?: [Point3D, Point3D] | null;
-  temporalCoverage?: Date | null;
-  accessRights?: Set<LicenseRequirement> | null;
+  maxAgeDays?: number | null;
+  accessRights?: LicenseRequirement[];
   crs?: string | null;
   unitOfMeasure?: string | null;
   comments?: string | null;
