@@ -22,6 +22,8 @@ jobs:
           node-version: '18.x'
           cache: npm
       - name: Install and build
+        env:
+          BUILD_SUBDIR: '/${{ github.event.repository.name }}/'
         run: |
           npm ci
           npx quasar build
