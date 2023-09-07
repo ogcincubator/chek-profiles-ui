@@ -21,7 +21,15 @@
         multiple
         clearable
         class="required"
-      />
+      >
+        <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+          <q-item v-bind="itemProps">
+            <q-item-section>
+              <q-checkbox :model-value="selected" @update:model-value="toggleOption(opt)" :label="opt.label" />
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
       <q-select
         v-if="availableSemantics?.length"
         v-model="semantics"
@@ -29,7 +37,15 @@
         :options="availableSemantics"
         multiple
         clearable
-      />
+      >
+        <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+          <q-item v-bind="itemProps">
+            <q-item-section>
+              <q-checkbox :model-value="selected" @update:model-value="toggleOption(opt)" :label="opt.label" />
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
       <q-select
         v-model="allowedGeometries"
         label="Allowed geometries"
@@ -37,7 +53,15 @@
         multiple
         clearable
         class="required"
-      />
+      >
+        <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+          <q-item v-bind="itemProps">
+            <q-item-section>
+              <q-checkbox :model-value="selected" @update:model-value="toggleOption(opt)" :label="opt.label" />
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
       <div class="row q-col-gutter-md">
         <div class="col-12 col-md-6">
           <q-select

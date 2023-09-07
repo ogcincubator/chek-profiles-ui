@@ -172,7 +172,7 @@
         </q-card-actions>
       </q-card>
     </q-form>
-    <q-dialog v-model="showAddContentRequirements">
+    <q-dialog v-model="showAddContentRequirements" no-backdrop-dismiss no-shake>
       <q-card style="width: 800px; max-width: 100%;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Add content requirements</div>

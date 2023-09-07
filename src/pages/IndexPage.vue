@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-import ProfileEditor from "components/ProfileEditor.vue";
+import ProfileEditor from 'components/ProfileEditor.vue';
 
 export default defineComponent({
   name: 'IndexPage',
