@@ -88,7 +88,7 @@
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-import {cityModules, lods, ContentRequirements, geometries, URIResource, CityModule, CityClass} from "./models";
+import {cityModules, lods, ContentRequirements, geometries, URIResource, CityModule, CityClass} from "src/models";
 
 export default defineComponent({
   emits: [

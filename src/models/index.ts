@@ -162,6 +162,7 @@ export interface ContentRequirements {
 }
 
 export interface DatasetRequirements {
+  id: string;
   title: string;
   description?: string | null;
   dataModel?: Set<URIResource> | null;

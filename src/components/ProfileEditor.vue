@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-form @reset="resetForm">
+    <q-form @reset="resetForm" @submit.prevent="saveProfile" ref="form">
       <q-card>
         <q-tabs
           v-model="tab"
@@ -12,15 +12,22 @@
 
         <q-separator/>
 
-        <q-tab-panels v-model="tab">
+        <q-tab-panels v-model="tab" keep-alive>
           <q-tab-panel name="metadata">
+            <q-input
+              class="required"
+              v-model="datasetRequirements.id"
+              label="Profile identifier (URI)"
+              :rules="[rules.required(), rules.isUri()]"
+            />
             <q-input
               class="required"
               v-model="datasetRequirements.title"
               label="Profile title"
+              :rules="[rules.required(), rules.minLength(3)]"
             />
             <q-input
-              label="Dataset description"
+              label="Profile description"
               v-model="datasetRequirements.description"
               type="textarea"
             />
@@ -140,10 +147,10 @@
               <template #body-cell-classes="props">
                 <q-td :props="props">
                   <div v-if="props.value?.length">
-                    {{ props.value.map(v => v.label).join(', ') }}
+                    {{ props.value.map((v: any) => v.label).join(', ') }}
                   </div>
                   <div v-if="props.row.semantics?.length">
-                    {{ props.row.semantics.map(v => v.label).join(', ') }}
+                    {{ props.row.semantics.map((v: any) => v.label).join(', ') }}
                   </div>
                 </q-td>
               </template>
@@ -151,7 +158,7 @@
               <template #body-cell-geometries="props">
                 <q-td :props="props">
                   <span v-if="props.value?.length">
-                    {{ props.value.map(v => v.label).join(', ') }}
+                    {{ props.value.map((v: any) => v.label).join(', ') }}
                   </span>
                 </q-td>
               </template>
@@ -189,13 +196,15 @@
 </template>
 <script lang="ts">
 import {defineComponent} from "vue";
-import {CityModels, ContentRequirements, DatasetRequirements, LicenseRequirement} from "components/models";
+import {CityModels, ContentRequirements, DatasetRequirements, LicenseRequirement} from "src/models";
+import {toRDF} from 'src/lib/profile';
 import ContentRequirementsForm from "components/ContentRequirementsForm.vue";
 
 export default defineComponent({
   components: {ContentRequirementsForm},
   data() {
     const datasetRequirements: DatasetRequirements = {
+      id: '',
       title: '',
       accessRights: [],
       dataModel: null,
@@ -231,6 +240,11 @@ export default defineComponent({
       contentRequirementsPagination: {
         rowsPerPage: 20,
       },
+      rules: {
+        required: (msg?: string) => ((val: string) => !!val.trim().length || msg || 'This value is required'),
+        minLength: (l: number, msg?: string) => ((val: string) => val.trim().length >= l || msg || `At least ${l} characters are required`),
+        isUri: (msg?: string) => ((val: string) => val.includes(':') || msg || 'A valid URI is required'),
+      },
     };
   },
   methods: {
@@ -242,7 +256,22 @@ export default defineComponent({
       this.datasetRequirements.contentRequirements.splice(idx, 1);
     },
     resetForm() {
+      this.datasetRequirements.id = '';
+      this.datasetRequirements.title = '';
+      this.datasetRequirements.comments = null;
+      this.datasetRequirements.crs = null;
+      this.datasetRequirements.dataModel = null;
+      this.datasetRequirements.accessRights = [];
+      this.datasetRequirements.maxAgeDays = null;
+      this.datasetRequirements.description = null;
       this.datasetRequirements.contentRequirements = [];
+      this.datasetRequirements.unitOfMeasure = null;
+      this.datasetRequirements.spatialCoverage = null;
+    },
+    saveProfile() {
+      if (this.$refs.form.validate()) {
+        console.log(toRDF(this.datasetRequirements));
+      }
     },
   },
   watch: {
