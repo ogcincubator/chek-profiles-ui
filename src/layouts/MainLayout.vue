@@ -3,7 +3,8 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          CHEK profile editor
+          <img src="img/chek-logo-white.png" alt="CHEK" class="toolbar-logo"/>
+          Profile editor
         </q-toolbar-title>
 
         <div>v0.0.1</div>
@@ -33,3 +34,11 @@ export default defineComponent({
   }
 });
 </script>
+
+<style>
+.toolbar-logo {
+  max-height: 26px;
+  vertical-align: middle;
+  margin-right: 0.3em;
+}
+</style>
