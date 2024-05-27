@@ -166,7 +166,7 @@ export interface DatasetRequirements {
   title: string;
   description?: string | null;
   dataModel?: Set<URIResource> | null;
-  spatialCoverage?: [Point3D, Point3D] | null;
+  spatialCoverage?: Point3D | null;
   maxAgeDays?: number | null;
   accessRights?: LicenseRequirement[];
   crs?: string | null;

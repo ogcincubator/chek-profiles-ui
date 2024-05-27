@@ -22,7 +22,7 @@ const toRDF = (ds: DatasetRequirements) => {
         requires: [] as string[],
         permits: [] as string[],
         prohibits: [] as string[],
-      } as any,
+      } as Record<string, string[]>,
       crs: ds.crs,
       unitOfMeasure: ds.unitOfMeasure,
       spatialCoverage: {},
@@ -42,18 +42,11 @@ const toRDF = (ds: DatasetRequirements) => {
   }
 
   if (ds.spatialCoverage) {
-    const crs = ds.crs ? `<${ds.crs}> ` : '',
-      s = ds.spatialCoverage;
-    const points = [];
-
-    for (const z in [0, 1]) {
-      for (const i of [[0, 0], [0, 1], [1, 1], [1, 0]]) {
-        points.push(`${s[i[0]][0]} ${s[i[1]][1]} ${s[z][2]}`);
-      }
-    }
     result.requirements.spatialCoverage = {
-      wkt: `${crs}POLYGON Z ((${points.join(', ')}))`,
-    };
+      x: ds.spatialCoverage[0],
+      y: ds.spatialCoverage[1],
+      z: ds.spatialCoverage[2],
+    }
   }
 
   return result;

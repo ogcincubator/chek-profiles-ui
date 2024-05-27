@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-form @reset="resetForm" @submit.prevent="saveProfile" ref="form">
+    <q-form @reset="resetForm" @submit.prevent="saveProfile" ref="form" greedy>
       <q-card>
         <q-tabs
           v-model="tab"
@@ -47,51 +47,59 @@
               bordered
             >
               <q-card-section>
-                <div class="text-subtitle1">Spatial coverage</div>
-                <div class="row q-col-gutter-sm">
+                <div class="row q-col-gutter-lg">
                   <div class="col-md-6">
-                    <div class="row items-center q-gutter-sm spatial-coverage-point">
-                      <div class="col-12 col-md-auto">
-                        Min:
-                      </div>
+                    <div class="text-subtitle1">Spatial coverage around point of interest</div>
+                    <div class="row q-col-gutter-sm">
                       <div class="col-12">
-                        <q-input v-model.number="spatialCoverageCoords[0]" type="number" dense/>
-                      </div>
-                      <div class="col-12">
-                        <q-input v-model.number="spatialCoverageCoords[1]" type="number" dense/>
-                      </div>
-                      <div class="col-12">
-                        <q-input v-model.number="spatialCoverageCoords[2]" vtype="number" dense/>
+                        <div class="row items-center q-gutter-sm spatial-coverage-point">
+                          <div class="col-12">
+                            <q-input v-model.number="spatialCoverageCoords[0]" dense label="X"
+                                     input-style="text-align: center"
+                                     :rules="[rules.positiveDecimalNumber()]"
+                            />
+                          </div>
+                          <div class="col-12">
+                            <q-input v-model.number="spatialCoverageCoords[1]" dense label="Y"
+                                     input-style="text-align: center"
+                                     :rules="[rules.positiveDecimalNumber()]"
+                            />
+                          </div>
+                          <div class="col-12">
+                            <q-input v-model.number="spatialCoverageCoords[2]" dense label="Z"
+                                     input-style="text-align: center"
+                                     :rules="[rules.positiveDecimalNumber()]"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-6">
-                    <div class="row items-center q-gutter-sm spatial-coverage-point">
-                      <div class="col-12 col-md-auto">
-                        Max:
-                      </div>
-                      <div class="col-12">
-                        <q-input v-model.number="spatialCoverageCoords[3]" type="number" dense/>
-                      </div>
-                      <div class="col-12">
-                        <q-input v-model.number="spatialCoverageCoords[4]" type="number" dense/>
-                      </div>
-                      <div class="col-12">
-                        <q-input v-model.number="spatialCoverageCoords[5]" type="number" dense/>
-                      </div>
-                    </div>
+                    <div class="text-subtitle1">Coordinate reference system</div>
+                    <q-select
+                      label="Coordinate reference system"
+                      :options="crsOptions"
+                      v-model="datasetRequirements.crs"
+                      map-options
+                      emit-value
+                      clearable
+                      dense
+                    />
                   </div>
                 </div>
               </q-card-section>
             </q-card>
 
             <div class="row q-col-gutter-md">
-              <div class="col-12 col-md-4">
+              <div class="col-md-4">
+                <div class="text-subtitle1">Temporal coverage</div>
                 <q-input
-                  label="Temporal coverage"
-                  hint="Maximum age for the dataset, in days"
+                  label="Maximum age for the dataset (days)"
                   v-model="datasetRequirements.maxAgeDays"
                   type="number"
+                  hide-hint
+                  dense
                 />
               </div>
               <div class="col-12 col-md-4 q-mt-sm">
@@ -105,14 +113,7 @@
                 />
               </div>
               <div class="col-12 col-md-4">
-                <q-select
-                  label="Coordinate reference system"
-                  :options="crsOptions"
-                  v-model="datasetRequirements.crs"
-                  map-options
-                  emit-value
-                  clearable
-                />
+
               </div>
             </div>
 
@@ -195,10 +196,11 @@
   </div>
 </template>
 <script lang="ts">
-import {defineComponent} from "vue";
-import {CityModels, ContentRequirements, DatasetRequirements, LicenseRequirement} from "src/models";
+import {defineComponent} from 'vue';
+import {CityModels, ContentRequirements, DatasetRequirements, LicenseRequirement} from 'src/models';
 import {toRDF} from 'src/lib/profile';
-import ContentRequirementsForm from "components/ContentRequirementsForm.vue";
+import ContentRequirementsForm from 'components/ContentRequirementsForm.vue';
+import {QForm, QTableColumn} from 'quasar';
 
 export default defineComponent({
   components: {ContentRequirementsForm},
@@ -215,7 +217,7 @@ export default defineComponent({
       tab: 'metadata',
       datasetRequirements,
       cityModels: CityModels,
-      spatialCoverageCoords: Array(6).fill(null),
+      spatialCoverageCoords: Array(3).fill(null),
       licenseRequirementOptions: [
         {label: 'Attribution', value: LicenseRequirement.attribution},
         {label: 'Share-alike', value: LicenseRequirement.shareAlike},
@@ -235,15 +237,24 @@ export default defineComponent({
         {name: 'lod', label: 'LoD', align: 'center', field: 'lod'},
         {name: 'accuracyM', label: 'Acc. (m)', align: 'center', field: 'accuracyM'},
         {name: 'actions', label: 'Actions', align: 'center', field: ''}
-      ],
+      ] as QTableColumn[],
       showAddContentRequirements: false,
       contentRequirementsPagination: {
         rowsPerPage: 20,
       },
       rules: {
-        required: (msg?: string) => ((val: string) => !!val.trim().length || msg || 'This value is required'),
-        minLength: (l: number, msg?: string) => ((val: string) => val.trim().length >= l || msg || `At least ${l} characters are required`),
-        isUri: (msg?: string) => ((val: string) => val.includes(':') || msg || 'A valid URI is required'),
+        required: (msg?: string) => ((val: string | null) => val === null || !!val.trim().length || msg || 'This value is required'),
+        minLength: (l: number, msg?: string) => ((val: string | null) => val === null || val.trim().length >= l || msg || `At least ${l} characters are required`),
+        isUri: (msg?: string) => ((val: string | null) => val === null || val.includes(':') || msg || 'A valid URI is required'),
+        positiveDecimalNumber: (msg?: string) => ((val: string | number | null) => {
+          if (val === null || (typeof val === 'number' && val > 0)) {
+            return true;
+          }
+          if (typeof val === 'string' && (!val.trim() || (val.trim().match(/^\d*\.?\d*$/) && parseFloat(val.trim()) > 0))) {
+            return true;
+          }
+          return msg || 'A positive decimal number is required';
+        }),
       },
     };
   },
@@ -269,27 +280,24 @@ export default defineComponent({
       this.datasetRequirements.spatialCoverage = null;
     },
     saveProfile() {
-      if (this.$refs.form.validate()) {
-        console.log(toRDF(this.datasetRequirements));
-      }
+      (this.$refs.form as QForm).validate()
+        .then(result => {
+          if (result) {
+            console.log(toRDF(this.datasetRequirements));
+          }
+        });
     },
   },
   watch: {
     spatialCoverageCoords: {
       deep: true,
       handler(v: never[]) {
-        if (v.every(c => c || c === 0)) {
-          if (!this.datasetRequirements.spatialCoverage) {
-            this.datasetRequirements.spatialCoverage = [[v[0], v[1], v[2]], [v[3], v[4], v[5]]];
-          } else {
-            for (let i = 0; i < 2; i++) {
-              for (let j = 0; j < 3; j++) {
-                this.datasetRequirements.spatialCoverage[i][j] = v[i * 3 + j];
-              }
-            }
-          }
+        if (!this.datasetRequirements.spatialCoverage) {
+          this.datasetRequirements.spatialCoverage = [v[0], v[1], v[2]];
         } else {
-          this.datasetRequirements.spatialCoverage = null;
+          for (let i = 0; i < 3; i++) {
+            this.datasetRequirements.spatialCoverage[i] = v[i];
+          }
         }
       },
     },
